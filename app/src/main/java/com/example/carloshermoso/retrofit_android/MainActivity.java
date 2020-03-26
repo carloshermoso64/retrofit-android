@@ -1,6 +1,8 @@
 package com.example.carloshermoso.retrofit_android;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
@@ -14,14 +16,30 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
+
+    private RecyclerView recyclerView;
+    private RecyclerView.Adapter mAdapter;
+    private RecyclerView.LayoutManager layoutManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        setContentView(R.layout.activity_main);
+        recyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
+        // use this setting to
+        // improve performance if you know that changes
+        // in content do not change the layout size
+        // of the RecyclerView
+        recyclerView.setHasFixedSize(true);
+        // use a linear layout manager
+        layoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(layoutManager);
 
         final Button bt = (Button) findViewById(R.id.button);
         final TextView tv = (TextView) findViewById(R.id.textView);
@@ -53,19 +71,15 @@ public class MainActivity extends AppCompatActivity {
                 repos.enqueue(new Callback<List<Repo>>() {
                     @Override
                     public void onResponse(Call<List<Repo>> call, Response<List<Repo>> response) {
-
+                        List<String> input = new ArrayList<>();
                         List<Repo> repos = response.body();
-                        String texto ="[";
                         for (Repo r : repos){
-                            texto = texto + r.full_name+ " ";
+
+                            input.add(r.full_name);
 
                         }
-                        texto= texto + "]";
-
-
-
-
-                        tv.setText(texto);
+                        mAdapter = new MyAdapter(input);
+                        recyclerView.setAdapter(mAdapter);
                     }
 
                     @Override
