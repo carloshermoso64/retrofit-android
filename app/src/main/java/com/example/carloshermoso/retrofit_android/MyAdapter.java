@@ -66,14 +66,13 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
     public void onBindViewHolder(ViewHolder holder, final int position) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
-        int pos = holder.getAdapterPosition();
-
+        final ViewHolder vh = holder;
         final String name = values.get(position);
         holder.txtHeader.setText(name);
         holder.txtHeader.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                remove(pos);
+                remove(vh.getAdapterPosition());
             }
         });
 

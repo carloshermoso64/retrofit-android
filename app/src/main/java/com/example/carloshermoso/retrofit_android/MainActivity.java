@@ -14,6 +14,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -43,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
 
         final Button bt = (Button) findViewById(R.id.button);
         final TextView tv = (TextView) findViewById(R.id.textView);
+        final EditText et = (EditText) findViewById(R.id.editText1);
 
         bt.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -65,28 +67,36 @@ public class MainActivity extends AppCompatActivity {
 
                 GitHubService service = retrofit.create(GitHubService.class);
 
-                Call<List<Repo>> repos = service.listRepos("carloshermoso64");
+                try {
+
+                    final String user = et.getText().toString();
 
 
-                repos.enqueue(new Callback<List<Repo>>() {
-                    @Override
-                    public void onResponse(Call<List<Repo>> call, Response<List<Repo>> response) {
-                        List<String> input = new ArrayList<>();
-                        List<Repo> repos = response.body();
-                        for (Repo r : repos){
+                    Call<List<Repo>> repos = service.listRepos(user);
 
-                            input.add(r.full_name);
 
+                    repos.enqueue(new Callback<List<Repo>>() {
+                        @Override
+                        public void onResponse(Call<List<Repo>> call, Response<List<Repo>> response) {
+                            List<String> input = new ArrayList<>();
+                            List<Repo> repos = response.body();
+                            for (Repo r : repos) {
+
+                                input.add(r.full_name);
+
+                            }
+                            mAdapter = new MyAdapter(input);
+                            recyclerView.setAdapter(mAdapter);
                         }
-                        mAdapter = new MyAdapter(input);
-                        recyclerView.setAdapter(mAdapter);
-                    }
 
-                    @Override
-                    public void onFailure(Call<List<Repo>> call, Throwable t) {
-                        tv.setText("Fallo");
-                    }
-                });
+                        @Override
+                        public void onFailure(Call<List<Repo>> call, Throwable t) {
+                            tv.setText("Fallo");
+                        }
+                    });
+                } catch (Exception e) {
+                    tv.setText("Pon un usuario");
+                }
             }
         });
 
