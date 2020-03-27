@@ -66,8 +66,7 @@ public class MainActivity extends AppCompatActivity {
                         .build();
 
                 GitHubService service = retrofit.create(GitHubService.class);
-
-                try {
+                
 
                     final String user = et.getText().toString();
 
@@ -80,10 +79,14 @@ public class MainActivity extends AppCompatActivity {
                         public void onResponse(Call<List<Repo>> call, Response<List<Repo>> response) {
                             List<String> input = new ArrayList<>();
                             List<Repo> repos = response.body();
-                            for (Repo r : repos) {
 
-                                input.add(r.full_name);
+                            try{
+                                for (Repo r : repos) {
 
+                                    input.add(r.full_name);
+
+                                }            } catch (NullPointerException e) {
+                                tv.setText("El usuario introducido es incorrecto");
                             }
                             mAdapter = new MyAdapter(input);
                             recyclerView.setAdapter(mAdapter);
@@ -94,9 +97,7 @@ public class MainActivity extends AppCompatActivity {
                             tv.setText("Fallo");
                         }
                     });
-                } catch (Exception e) {
-                    tv.setText("Pon un usuario");
-                }
+
             }
         });
 
